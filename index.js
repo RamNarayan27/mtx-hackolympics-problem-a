@@ -1,5 +1,6 @@
 const { exec } = require('child_process');
 const { Storage } = require('@google-cloud/storage');
+const fs = require('fs');
 
 let args = process.argv.slice(2);
 
@@ -45,6 +46,9 @@ function gcpGet(args){
             bucket.upload(args[args.length - 1],(err,file,apiResponse) => {
                 if(err) console.log('error',err);
                 console.log('finis')
+                fs.unlink(args[args.length - 1],(err) => {
+                    if(err) console.log('error',err);
+                })
             });
         });
     } 

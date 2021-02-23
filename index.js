@@ -4,18 +4,21 @@ const { Storage } = require('@google-cloud/storage');
 let args = process.argv.slice(2);
 
 function cmdExec(cmd){
-    exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-            console.log(`command error: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`command stderr: ${stderr}`);
-            return;
-        }
-        console.log(`command stdout: ${stdout}`);
-
-    });
+    let prom = new Promise((resolve,reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                console.log(`command error: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.log(`command stderr: ${stderr}`);
+                return;
+            }
+            console.log(`command stdout: ${stdout}`);
+            resolve(1);
+        });
+    })
+    return prom;
 }
 
 function gcpGet(args){
@@ -38,16 +41,7 @@ function gcpGet(args){
         for(i = 1; i < args.length; i++){
             command += args[i] + ' ';
         }
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                console.log(`command error: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                console.log(`command stderr: ${stderr}`);
-                return;
-            }
-            console.log(`command stdout: ${stdout}`);
+        cmdExec(command).then((result) => {
             bucket.upload(args[args.length - 1],(err,file,apiResponse) => {
                 if(err) console.log('error',err);
                 console.log('finis')

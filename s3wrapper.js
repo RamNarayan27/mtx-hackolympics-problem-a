@@ -34,7 +34,6 @@ function gcpGet(args){
         for(i = 0; i < args.length; i++){
             command += args[i] + ' ';
         }
-        console.log('final command is ',command);
         cmdExec(command);
     }
     else{
@@ -45,7 +44,7 @@ function gcpGet(args){
         cmdExec(command).then((result) => {
             bucket.upload(args[args.length - 1],(err,file,apiResponse) => {
                 if(err) console.log('error',err);
-                console.log('finis')
+                console.log('Successfully Uploaded to Google Cloud Storage');
                 fs.unlink(args[args.length - 1],(err) => {
                     if(err) console.log('error',err);
                 })
